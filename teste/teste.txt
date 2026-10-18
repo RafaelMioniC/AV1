@@ -1,0 +1,142 @@
+npm install
+npm run dev
+
+usuario e senhas:
+    usuario: admin senhas: admin123
+
+
+teste organização:
+    organização criar --id ORG001 --nome "Empresa Teste" --cnpj 04.252.011/0001-10
+    organização listar
+
+    teste com mesmo cnpj/ mesmo id:
+    organização criar --id ORG001 --nome "Outra Empresa" --cnpj 04.252.011/0001-10
+
+    teste cnpj inválido:
+    organização criar --id ORG002 --nome "Empresa Invalida" --cnpj 11111111111111
+
+teste contrato:
+
+    contrato criar --id CON001 --org ORG001 --inicio 01/09/2026 --fim 01/09/2027 --descricao "Coleta mensal" --valor 1500 --coleta true
+    contrato listar
+
+    teste com org inexistente:
+    contrato criar --id CON002 --org ORG999 --inicio 01/09/2026 --fim 01/09/2027 --descricao "Teste" --valor 1000 --coleta true
+
+    teste valor negativo:
+    contrato criar --id CON003 --org ORG001 --inicio 01/09/2026 --fim 01/09/2027 --descricao "Teste" --valor -500 --coleta true
+
+    data final antes da data incial:
+    contrato criar --id CON004 --org ORG001 --inicio 01/09/2027 --fim 01/09/2026 --descricao "Teste" --valor 1000 --coleta true
+
+    renovar contrato:
+    contrato renovar --id CON001 --fim 01/09/2028
+    contrato listar
+
+    encerrar contrato:
+    contrato encerrar --id CON001
+    contrato listar
+
+teste lotes:
+
+    lote criar --org ORG001 --nf NF001 --transp "TransRapida"
+    lote listar
+
+    teste de criar lote, mas parametros de outra forma:
+    lote criar ORG001 NF002 TransRapida
+
+    teste de data:
+    lote criar --org ORG001 --nf NF003 --transp Transportadora --data 25/09/2026
+
+    data futuro dessa vez:
+    lote criar --org ORG001 --nf NF004 --transp Transportadora --data 30/12/2030
+
+    data com mais de 90 dias de intervalo:
+    lote criar --org ORG001 --nf NF005 --transp Transportadora --data 01/01/2020
+
+teste equipamentos:
+
+    teste com id de lote invalido (LOTE-7244F69B)
+    equipamento cadastrar --lote LOTE01 --id EQ001 --codigo BAR001 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 2023 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso 2.5
+
+    teste com id valido:
+    equipamento cadastrar --lote LOTE-7244F69B --id EQ001 --codigo BAR001 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 2023 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso 2.5
+
+    equipamento já cadastrado:
+    equipamento cadastrar --lote LOTE-7244F69B --id EQ001 --codigo BAR003 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 2023 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso 2.5
+
+    código de barra já cadastrado:
+    equipamento cadastrar --lote LOTE-7244F69B --id EQ003 --codigo BAR001 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 2023 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso 2.5
+
+    peso inválido:
+    equipamento cadastrar --lote LOTE-7244F69B --id EQ004 --codigo BAR004 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 2023 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso -2
+
+    ano de fab. inválido:
+    equipamento cadastrar --lote LOTE-7244F69B --id EQ005 --codigo BAR005 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 1800 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso 2.5
+
+    mudar o estado mais de 2 categorias:
+    equipamento estado --equipamento EQ001 --estado USADO_LEVE
+
+    mudar para estado sem precisar de justificativa:
+    equipamento estado --equipamento EQ001 --estado BOM_ESTADO
+
+    com justificativa:
+    equipamento estado --equipamento EQ001 --estado DANIFICADO_LEVE --justificativa "Equipamento sofreu queda durante transporte"
+
+
+teste movimentação:
+
+    movimentação registrar --equipamento EQ001 --status EM_TRIAGEM --justificativa "Início da triagem"
+    movimentação registrar --equipamento EQ001 --status TRIAGEM_CONCLUIDA --justificativa "Triagem concluída"
+    movimentação registrar --equipamento EQ001 --status DESMONTE --justificativa "Encaminhamento para desmonte"
+
+    testar antes de novo produto passar por triagem:
+
+    equipamento cadastrar --lote LOTE-7244F69B --id EQ006 --codigo BAR006 --tipo NOTEBOOK --marca Dell --modelo Latitude --ano 2023 --estado NOVO --data 25/09/2026 --local Almoxarifado --peso 2.5
+    movimentação registrar --equipamento EQ006 --status DESMONTE --justificativa "Teste"
+
+    rastreamento do movemento:
+    movimentação listar --equipamento EQ001
+    movimentação listar
+
+teste configurações:
+
+    configuração listar
+    configuração atualizar --aliquota 10 --depreciacao 5
+    configuração listar
+
+    configuração inválida:
+    configuração atualizar --aliquota -10 --depreciacao 5
+
+relatório:
+
+    relatório
+
+criar usuario:
+
+    usuario criar --usuario operador --senha Operador@123 --papel OPERADOR_CADASTRO
+    usuario criar --usuario gestor --senha Gestor@123 --papel GESTOR_ALMOXARIFADO
+    usuario criar --usuario auditor --senha Auditor@123 --papel AUDITOR
+
+    usuario listar
+
+    
+teste agora serão com outros usuarios que não sejam admin:
+
+login como operador:
+
+    teste de criar lote (deve retornar invalido):
+    lote criar --org ORG001 --nf NF100 --transp Teste
+    equipamento listar
+    movimentação listar
+    relatório
+
+teste como gestor:
+
+    deve retornar invalido:
+    usuario criar --usuario teste --senha Teste@123 --papel AUDITOR
+
+teste como auditor:
+
+    deve retornar invalido:
+    organização criar --id ORG999 --nome "Teste" --cnpj 04.252.011/0001-10
